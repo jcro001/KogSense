@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExtensionInfo
+    id="kogsense"
+    displayName="@string/app_name"
+    summary="@string/ext_summary"
+    description="@string/ext_description"
+    scansDevices="false">
+</ExtensionInfo>

@@ -1,0 +1,67 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build Signed APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Make Gradlew Executable
+        run: chmod +x gradlew
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > release-key.jks
+
+      - name: Create keystore.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > keystore.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> keystore.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> keystore.properties
+          echo "storeFile=release-key.jks" >> keystore.properties
+
+      - name: Build with Gradle
+        run: ./gradlew assembleRelease
+
+      - name: Prepare Release Assets
+        run: |
+          VERSION=${{ github.ref_name }}
+          APK_NAME="KogSense-${VERSION}.apk"
+          mv app/build/outputs/apk/release/app-release.apk $APK_NAME
+          
+          # Update manifest.json with the correct version and APK URL
+          sed -i "s/v[0-9.]*\/download\/KogSense-v[0-9.]*.apk/${VERSION}\/download\/${APK_NAME}/g" manifest.json
+          sed -i "s/\"latestVersion\": \".*\"/\"latestVersion\": \"${VERSION#v}\"/g" manifest.json
+          
+          # Create a numeric version code from the tag (e.g., v1.1.0 -> 10100)
+          # We'll just use a simple major*10000 + minor*100 + patch logic
+          CLEAN_VER=${VERSION#v}
+          IFS='.' read -r -a PARTS <<< "$CLEAN_VER"
+          VCODE=$((PARTS[0]*10000 + PARTS[1]*100 + PARTS[2]))
+          sed -i "s/\"latestVersionCode\": [0-9]*/\"latestVersionCode\": ${VCODE}/g" manifest.json
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            KogSense-${{ github.ref_name }}.apk
+            manifest.json
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

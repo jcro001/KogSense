@@ -1,0 +1,9 @@
+{
+  "label": "KogSense",
+  "packageName": "com.kogsense",
+  "latestApkUrl": "https://github.com/jcro001/KogSense/releases/latest/download/KogSense-v1.0.0.apk",
+  "latestVersion": "1.0.0",
+  "latestVersionCode": 10000,
+  "developer": "jcro001",
+  "description": "KogSense beeps when you reach the first or last available gear, helping you focus on the road. Features proactive alerts, support for SRAM Road 2x soft-lockouts, and intelligent drivetrain detection."
+}
