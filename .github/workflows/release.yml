@@ -46,7 +46,7 @@ jobs:
           mv app/build/outputs/apk/release/app-release.apk $APK_NAME
           
           # Update manifest.json with the correct version and APK URL
-          sed -i "s/v[0-9.]*\/download\/KogSense-v[0-9.]*.apk/${VERSION}\/download\/${APK_NAME}/g" manifest.json
+          sed -i "s|\"latestApkUrl\": \".*\"|\"latestApkUrl\": \"https://github.com/jcro001/KogSense/releases/download/${VERSION}/${APK_NAME}\"|g" manifest.json
           sed -i "s/\"latestVersion\": \".*\"/\"latestVersion\": \"${VERSION#v}\"/g" manifest.json
           
           # Create a numeric version code from the tag (e.g., v1.1.0 -> 10100)
