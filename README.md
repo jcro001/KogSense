@@ -7,9 +7,13 @@
 ## Features
 
 - **End-of-Range Alerts**: Automatic beeps when you reach the first or last available gear in your cassette.
-- **Cross-Chain Blocked Gear Support**: Correctly handles systems that block certain gear combinations to prevent cross-chaining. For example, on SRAM 2x systems where the small-small combination is permanently locked out, KogSense identifies the actual reachable gear as the limit and beeps accordingly.
+- **Synchro & Sequential Shift Warnings**: Pre-shift warning beeps when entering a boundary gear before an automated synchronized front shift. Uses intuitive directional tones (ascending tone for UP shifts, descending tone for DOWN shifts).
+- **Smart Auto-Learning & Negative Evidence**: Automatically detects your drivetrain's synchro boundary cogs as you ride, filtering out false positives from manual front ring operations using negative evidence logic.
+- **Multi-Bike Support**: Per-sensor configuration isolation automatically remembers settings, cassette sizes, and synchro boundaries independently for each connected bike.
+- **In-Ride Notifications**: Dispatches native Karoo system notifications and on-screen alerts whenever a new synchro boundary cog is auto-learned.
+- **Cross-Chain Blocked Gear Support**: Correctly handles systems that block certain gear combinations to prevent cross-chaining (e.g. SRAM 2x locked small-small combos).
 - **Tested & Verified**: Fully tested and verified on **SRAM AXS 2x12** and **Shimano Di2 2x12** drivetrains.
-- **Smart Detection**: Automatically detects your drivetrain brand and configuration to adjust beeping logic without manual setup.
+- **Smart Detection**: Automatically detects your drivetrain brand and hardware configuration without manual setup.
 
 ## Installation
 
@@ -26,10 +30,11 @@
 
 ## Configuration
 
-Note that the extension will work automatically without any setting changes. However, you can adjust the following within the KogSense app:
-- **Alert Toggles**: Enable or disable Low Gear and High Gear alerts independently.
+Note that the extension will work automatically without any setting changes. However, you can adjust the following within the KogSense app on a per-bike basis:
+- **Alert Toggles**: Enable or disable Low Gear, High Gear, and Synchro/Sequential Shift alerts independently per bike.
+- **Synchro Shift Boundaries**: Set Shift Up and Shift Down boundary cogs to "Auto" (auto-detects as you ride), "Off", or lock to a specific manual cog.
 - **Cassette Size**: Manually set your cassette size (10S-13S) or let the app detect it automatically.
-- **Drivetrain Mode**: Force SRAM/Shimano modes or use the "Auto" detection.
+- **Drivetrain Mode**: Force SRAM/Shimano modes or use "Auto" detection.
 
 ## Support
 
