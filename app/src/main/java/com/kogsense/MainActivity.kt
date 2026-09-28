@@ -84,7 +84,8 @@ fun <T> DropdownSettingCard(
     selectedValue: String,
     options: List<Pair<T, String>>,
     onOptionSelected: (T) -> Unit,
-    subtitle: String? = null
+    subtitle: String? = null,
+    isStacked: Boolean = false
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -94,84 +95,168 @@ fun <T> DropdownSettingCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Left side: Icon + Title + Subtitle
-            Row(
-                modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
+        if (isStacked) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(start = 12.dp)
-                        .weight(1f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        overflow = TextOverflow.Clip
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
                     )
-                    if (!subtitle.isNullOrEmpty()) {
+                    Column(modifier = Modifier.padding(start = 12.dp)) {
                         Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            overflow = TextOverflow.Clip
+                            text = title,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+                        if (!subtitle.isNullOrEmpty()) {
+                            Text(
+                                text = subtitle,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Surface(
+                        onClick = { expanded = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = selectedValue,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Icon(
+                                imageVector = Icons.Rounded.ExpandMore,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        options.forEach { (value, label) ->
+                            DropdownMenuItem(
+                                text = { Text(label) },
+                                onClick = {
+                                    onOptionSelected(value)
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
-
-            // Right side: Dropdown value + icon
-            Box {
-                Surface(
-                    onClick = { expanded = true },
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        } else {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Left side: Icon + Title + Subtitle
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Column(
+                        modifier = Modifier.padding(start = 12.dp, end = 8.dp)
                     ) {
                         Text(
-                            text = selectedValue,
-                            style = MaterialTheme.typography.bodySmall,
+                            text = title,
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
-                        Icon(
-                            imageVector = Icons.Rounded.ExpandMore,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp).padding(start = 2.dp)
-                        )
+                        if (!subtitle.isNullOrEmpty()) {
+                            Text(
+                                text = subtitle,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
 
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    options.forEach { (value, label) ->
-                        DropdownMenuItem(
-                            text = { Text(label) },
-                            onClick = {
-                                onOptionSelected(value)
-                                expanded = false
-                            }
-                        )
+                // Right side: Dropdown value + icon
+                Box(contentAlignment = Alignment.CenterEnd) {
+                    Surface(
+                        onClick = { expanded = true },
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = selectedValue,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Icon(
+                                imageVector = Icons.Rounded.ExpandMore,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp).padding(start = 2.dp)
+                            )
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        options.forEach { (value, label) ->
+                            DropdownMenuItem(
+                                text = { Text(label) },
+                                onClick = {
+                                    onOptionSelected(value)
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -184,8 +269,16 @@ fun KogSenseScreen() {
     val context = LocalContext.current
     val sharedPreferences = remember { context.getSharedPreferences("kogsense_prefs", Context.MODE_PRIVATE) }
 
-    // Load all saved bike sensors (ONLY those with valid drivetrain data)
-    val allBikeSensors = remember {
+    // Load global settings for fallback
+    var autoDetectedBrand by remember {
+        mutableStateOf(sharedPreferences.getString("detected_brand", "None") ?: "None")
+    }
+    var detectedSourceName by remember {
+        mutableStateOf(sharedPreferences.getString("detected_source_name", "") ?: "")
+    }
+
+    // Load all saved bike sensors
+    val allBikeSensors = remember(autoDetectedBrand, detectedSourceName) {
         val prefs = sharedPreferences
         val sensors = mutableListOf<Pair<String, String>>()
         val allKeys = prefs.all.keys
@@ -199,40 +292,28 @@ fun KogSenseScreen() {
             }
         }
 
+        val lastSourceId = prefs.getString("last_source_id", null)
+        val currentId = lastSourceId ?: "default"
+        if (sensors.none { it.first == currentId }) {
+            val currentName = if (detectedSourceName.isNotEmpty()) detectedSourceName else if (lastSourceId != null) lastSourceId else "Default Bike"
+            sensors.add(currentId to currentName)
+        }
+
         // Sort by name for consistency
         sensors.sortBy { it.second }
         sensors
     }
 
     // State for selected bike (default to last connected or first available)
-    var selectedBike by remember {
+    var selectedBike by remember(allBikeSensors) {
         val lastSourceId = sharedPreferences.getString("last_source_id", null)
         mutableStateOf(
             if (lastSourceId != null && allBikeSensors.any { it.first == lastSourceId }) {
                 lastSourceId
             } else {
-                allBikeSensors.firstOrNull()?.first ?: ""
+                allBikeSensors.firstOrNull()?.first ?: "default"
             }
         )
-    }
-
-    // If no bikes are found, show a message
-    if (allBikeSensors.isEmpty()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "No bikes detected. Connect a bike with an electronic drivetrain sensor.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-        }
-        return
     }
 
     // Load settings for the selected bike (fallback to global if not set)
@@ -307,14 +388,6 @@ fun KogSenseScreen() {
                 sharedPreferences.getString("pref_drivetrain_brand", "Auto") ?: "Auto"
             ) ?: "Auto"
         )
-    }
-
-    // Load global settings for fallback
-    var autoDetectedBrand by remember {
-        mutableStateOf(sharedPreferences.getString("detected_brand", "None") ?: "None")
-    }
-    var detectedSourceName by remember {
-        mutableStateOf(sharedPreferences.getString("detected_source_name", "") ?: "")
     }
 
     // Debug log
@@ -455,7 +528,8 @@ fun KogSenseScreen() {
                 options = allBikeSensors,
                 onOptionSelected = { bikeId ->
                     selectedBike = bikeId
-                }
+                },
+                isStacked = true
             )
 
             // Settings Header
